@@ -204,7 +204,7 @@ pg_basebackup -h 103.103.175.106 -D /var/lib/pgsql/14/data -U replicator -P --wa
 ### 3️⃣ Alternatif Cepat: Menggunakan `rsync`
 
 ```bash
-rsync -av --progress /var/lib/pgsql/14/data/ replicator@192.168.1.20:/var/lib/pgsql/14/data/
+rsync -av --progress /var/lib/pgsql/14/data/ replicator@103.103.175.106:/var/lib/pgsql/14/data/
 ```
 
 Pastikan PostgreSQL di Standby dalam kondisi mati.
