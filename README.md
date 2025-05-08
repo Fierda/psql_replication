@@ -25,6 +25,7 @@ Tambahkan atau sesuaikan baris berikut:
 wal_level = replica
 max_wal_senders = 5
 max_replication_slots = 5
+wal_keep_size = 1024  # Size in MB (example: 1GB of WAL)
 hot_standby = on
 ```
 
