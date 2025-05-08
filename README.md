@@ -2,14 +2,6 @@
 
 Physical replication (replikasi fisik) di PostgreSQL memungkinkan Anda untuk membuat salinan persis dari server database utama (primary) ke server sekunder (standby). Panduan ini akan menjelaskan cara mengatur replikasi fisik PostgreSQL di Ubuntu dengan benar dan tanpa kesalahan.
 
-## Prasyarat
-
-- Dua server Ubuntu (misalnya Ubuntu 20.04/22.04)
-- PostgreSQL versi 12 atau lebih baru diinstal pada kedua server
-- Koneksi jaringan antara kedua server
-- Akses root atau sudo pada kedua server
-- Firewall yang memungkinkan koneksi pada port PostgreSQL (default: 5432)
-
 ## Langkah 1: Persiapan Server Primary
 
 Pertama, kita perlu mengkonfigurasi server primary (master):
