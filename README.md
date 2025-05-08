@@ -35,7 +35,7 @@ Tambahkan akses untuk Standby:
 
 ```
 # Allow replication connections from standby
-host replication replicator 192.168.1.20/32 md5
+host replication replicator 103.103.175.109/32 md5
 ```
 
 > **Catatan:** Gantilah IP `192.168.1.20` dengan IP Standby Server.
@@ -67,7 +67,7 @@ sudo systemctl stop postgresql
 ### Sinkronisasi Data dari Primary
 
 ```bash
-pg_basebackup -h 192.168.1.10 -D /var/lib/pgsql/14/data -U replicator -P --wal-method=stream
+pg_basebackup -h 103.103.175.106 -D /var/lib/pgsql/14/data -U replicator -P --wal-method=stream
 ```
 
 > **Catatan:**
@@ -81,7 +81,7 @@ Buat file `recovery.conf` di dalam direktori data:
 
 ```
 standby_mode = 'on'
-primary_conninfo = 'host=192.168.1.10 port=5432 user=replicator password=strongpassword'
+primary_conninfo = 'host=103.103.175.106 port=5432 user=replicator password=strongpassword'
 trigger_file = '/tmp/postgresql.trigger'
 ```
 
@@ -159,7 +159,7 @@ sudo systemctl stop postgresql
 3. Sinkronisasi ulang jika perlu:
 
 ```bash
-pg_basebackup -h 192.168.1.10 -D /var/lib/pgsql/14/data -U replicator -P --wal-method=stream
+pg_basebackup -h 103.103.175.106 -D /var/lib/pgsql/14/data -U replicator -P --wal-method=stream
 ```
 
 4. Mulai kembali PostgreSQL di Standby:
@@ -193,7 +193,7 @@ Jika file WAL yang dibutuhkan tidak ada, Anda harus melakukan sinkronisasi manua
 ### 2️⃣ Sinkronisasi Manual dengan `pg_basebackup`
 
 ```bash
-pg_basebackup -h 192.168.1.10 -D /var/lib/pgsql/14/data -U replicator -P --wal-method=stream
+pg_basebackup -h 103.103.175.106 -D /var/lib/pgsql/14/data -U replicator -P --wal-method=stream
 ```
 
 ### 3️⃣ Alternatif Cepat: Menggunakan `rsync`
