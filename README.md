@@ -1,4 +1,3 @@
-
 # PostgreSQL Physical Replication Guide
 
 ## 1. Pengenalan Physical Replication
@@ -131,4 +130,92 @@ Jika hasilnya `t`, maka Standby dalam mode recovery dan replikasi sudah berjalan
 
 ---
 
-Sekarang PostgreSQL Physical Replication sudah terkonfigurasi dengan baik. Jika Anda membutuhkan langkah lebih lanjut seperti failover dan recovery, kita bisa lanjutkan ke tahapan berikutnya.
+## 8. Menghentikan dan Melanjutkan Replication
+
+### Menghentikan Replication
+
+Pada Standby Server:
+
+```bash
+sudo systemctl stop postgresql
+```
+
+Jika Anda ingin menghentikan hanya replikasinya tanpa menghentikan PostgreSQL, Anda bisa:
+
+```sql
+SELECT pg_terminate_backend(pid) FROM pg_stat_replication;
+```
+
+### Melanjutkan Replication Setelah Terputus
+
+1. Pastikan Primary Server masih menghasilkan WAL files yang cukup.
+2. Di Standby Server, pastikan PostgreSQL dalam keadaan berhenti:
+
+```bash
+sudo systemctl stop postgresql
+```
+
+3. Sinkronisasi ulang jika perlu:
+
+```bash
+pg_basebackup -h 192.168.1.10 -D /var/lib/pgsql/14/data -U replicator -P --wal-method=stream
+```
+
+4. Mulai kembali PostgreSQL di Standby:
+
+```bash
+sudo systemctl start postgresql
+```
+
+5. Verifikasi:
+
+```sql
+SELECT * FROM pg_stat_replication;
+```
+
+Jika status `streaming` muncul kembali, replikasi sudah tersambung kembali.
+
+---
+
+## 9. Manual Resynchronization After Long Downtime
+
+Jika replikasi terputus lebih dari beberapa hari dan WAL files sudah tidak tersedia, langkah berikut dapat dilakukan:
+
+### 1️⃣ Cek Ketersediaan WAL Files di Primary
+
+```bash
+ls -l /var/lib/pgsql/14/data/pg_wal/
+```
+
+Jika file WAL yang dibutuhkan tidak ada, Anda harus melakukan sinkronisasi manual.
+
+### 2️⃣ Sinkronisasi Manual dengan `pg_basebackup`
+
+```bash
+pg_basebackup -h 192.168.1.10 -D /var/lib/pgsql/14/data -U replicator -P --wal-method=stream
+```
+
+### 3️⃣ Alternatif Cepat: Menggunakan `rsync`
+
+```bash
+rsync -av --progress /var/lib/pgsql/14/data/ replicator@192.168.1.20:/var/lib/pgsql/14/data/
+```
+
+Pastikan PostgreSQL di Standby dalam kondisi mati.
+
+### 4️⃣ Start PostgreSQL di Standby
+
+```bash
+sudo systemctl start postgresql
+```
+
+### 5️⃣ Verifikasi
+
+```sql
+SELECT * FROM pg_stat_replication;
+```
+
+Jika status `streaming` sudah aktif kembali, sinkronisasi manual berhasil dilakukan.
+
+---
+
