@@ -25,10 +25,15 @@ Tambahkan atau sesuaikan baris berikut:
 wal_level = replica
 max_wal_senders = 5
 max_replication_slots = 5
-wal_keep_size = 1024  # Size in MB (example: 1GB of WAL)
+wal_keep_size = 10240   # 10GB of WAL retention
 hot_standby = on
-```
+archive_mode = on
+archive_timeout = 60s
+archive_command = 'cp %p /var/lib/postgresql/wal_archive/%f'
 
+```
+> **Catatan:** Gantilah archive_command = 'rsync -av %p user@backup-server:/path/to/wal_archive/%f' dengan IP NAS untuk remote backup
+> 
 ### Ubah `pg_hba.conf`
 
 Tambahkan akses untuk Standby:
